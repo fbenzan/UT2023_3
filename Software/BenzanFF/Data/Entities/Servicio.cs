@@ -12,7 +12,7 @@ public class Servicio : Entity
 
     #region Relaciones
     [ForeignKey(nameof(IdCategoria))]
-    public ServicioCategoria Categoria { get; set; }
+    public ServicioCategoria? Categoria { get; set; }
     #endregion
 }
 

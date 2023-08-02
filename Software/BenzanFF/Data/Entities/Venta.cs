@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BenzanFF.Data.Entities;
 
@@ -13,8 +14,8 @@ public class Venta : Entity
 
     #region Relaciones
     [ForeignKey(nameof(IdCliente))]
-    public Cliente Cliente { get; set; }
-    public virtual ICollection<VentaDetalle> Detalles { get; set; }
+    public virtual Cliente? Cliente { get; set; }
+    public virtual ICollection<VentaDetalle>? Detalles { get; set; }
     #endregion
 }
 

@@ -11,10 +11,10 @@ public class VentaDetalle : Entity
     public decimal PrecioVenta { get; set; }
     #region Relaciones
     [ForeignKey(nameof(IdVenta))]
-    public Venta Venta { get; set; }
+    public virtual Venta? Venta { get; set; }
 
     [ForeignKey(nameof(IdServicio))]
-    public Servicio Servicio { get; set; }
+    public virtual Servicio? Servicio { get; set; }
     #endregion
 }
 
