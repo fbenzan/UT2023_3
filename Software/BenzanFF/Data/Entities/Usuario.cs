@@ -1,4 +1,5 @@
 ﻿using BenzanFF.Extentions;
+using BenzanFF.Response;
 
 namespace BenzanFF.Data.Entities;
 
@@ -35,5 +36,14 @@ public class Usuario : Entity
     {
         return Password == password.Encriptar();
     }
+
+    public LoginResponse ToResponse()
+    => new() 
+    { 
+        Id = Id,
+        Name = Name,
+        Nickname = Nickname,
+        Role = Role 
+    };
 }
 
