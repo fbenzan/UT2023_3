@@ -1,8 +1,6 @@
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 using BenzanFF.Data;
-using BenzanFF.Data.Contexts.Interfaces;
 using BenzanFF.Data.Contexts;
+using BenzanFF.Data.Contexts.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -43,5 +41,7 @@ using (var scope = app.Services.GetService<IServiceScopeFactory>()!.CreateScope(
     //Se inicializan los datos, si es requerido...
     await BFFMyDbContextSeeder.Inicializar(dbContext);
 }
+//Con la terminal desde la ubicacion de la solucion, se ejecuta el comando
+//dotnet ef migrations add InitialCreate --project BenzanFF --output-dir Data/Contexts/Migrations --context BFFMyDbContext
 
-    app.Run();
+app.Run();
