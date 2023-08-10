@@ -1,4 +1,5 @@
 ﻿@using System.Net.Http
+@using BenzanFF.Authentication;
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Components.Forms
@@ -8,3 +9,7 @@
 @using Microsoft.JSInterop
 @using BenzanFF
 @using BenzanFF.Shared
+
+@inject ICustomAuthenticationStateProvider _authStateProvider;
+@inject NavigationManager urlManager
+@inject IJSRuntime JavaScript

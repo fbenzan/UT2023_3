@@ -1,18 +1,27 @@
+using BenzanFF.Authentication;
 using BenzanFF.Data;
 using BenzanFF.Data.Contexts;
 using BenzanFF.Data.Contexts.Interfaces;
+using BenzanFF.Data.Services;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddAuthenticationCore();
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
+
 //Se agregar el conexto de la base de datos como contexto. 
 builder.Services.AddDbContext<BFFMyDbContext>();
+builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
+
 //Se confgura la inyeccion de dependencias del contexto.
 builder.Services.AddScoped<IBFFMyDbContext, BFFMyDbContext>();
+builder.Services.AddScoped<ICustomAuthenticationStateProvider, CustomAuthenticationStateProvider>();
+builder.Services.AddScoped<IUserManagerService, UserManagerService>();
 
 var app = builder.Build();
 

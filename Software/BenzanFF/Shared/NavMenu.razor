@@ -1,4 +1,7 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@using BenzanFF.Data.Services;
+@inject IUserManagerService userManagerService;
+
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">BenzanFF</a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
@@ -24,6 +27,27 @@
                 <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
             </NavLink>
         </div>
+        <AuthorizeView>
+                <Authorized>
+                    <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="/perfil">
+                        <i class="oi oi-person"></i>Mi Perfil
+                    </NavLink>
+                    </div>
+                <div class="nav-item px-3">
+                    <a class="nav-link" @onclick="Logout">
+                        <i class="oi oi-account-logout"></i>Cerrar Sesión
+                    </a>
+                </div>
+                </Authorized>
+                <NotAuthorized>
+                    <div class="nav-item px-3">
+                        <NavLink class="nav-link" href="/login">
+                            <i class="oi oi-account-login"></i>Iniciar Sesión
+                        </NavLink>
+                    </div>
+                </NotAuthorized>
+        </AuthorizeView>
     </nav>
 </div>
 
@@ -35,5 +59,11 @@
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
+    }
+    private async Task Logout()
+    {
+        var logout = await userManagerService.Logout();
+        if(logout.Success) 
+            urlManager.NavigateTo("/login", true);
     }
 }

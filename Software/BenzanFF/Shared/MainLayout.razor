@@ -8,9 +8,22 @@
     </div>
 
     <main>
-        <div class="top-row px-4">
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
-        </div>
+        <AuthorizeView Context="data">
+            <Authorized>
+                <div class="top-row px-4">
+                    <NavLink class="nav-link" href="perfil">
+                        <span class="oi oi-person" aria-hidden="true"></span> @data.User!.Identity!.Name
+                    </NavLink>
+                </div>
+            </Authorized>
+            <NotAuthorized>
+                <div class="top-row px-4">
+                    <NavLink class="nav-link" href="login">
+                        <span class="oi oi-account-login" aria-hidden="true"></span> Acceder
+                    </NavLink>
+                </div>
+            </NotAuthorized>
+        </AuthorizeView>
 
         <article class="content px-4">
             @Body

@@ -1,0 +1,32 @@
+﻿@page "/login";
+<h3>Login</h3>
+<div class="p-4" style="width:300px;">
+<EditForm OnValidSubmit="LoginMethod" Model="user">
+    <div class="mb-3">
+            <label for="nickname" class="form-label">Usuario</label>
+            <InputText id="nickname" class="form-control" @bind-Value=user.nickname></InputText>
+    </div>
+    <div class="mb-3">
+        <label for="password" class="form-label">Contraseña</label>
+        <InputText type="password" class="form-control" id="password" @bind-Value=user.password></InputText>
+    </div>
+        @if (!string.IsNullOrWhiteSpace(sms))
+        {
+            <div class="alert">
+                <p class="text-danger">@sms</p>
+            </div>
+        }
+        <button type="submit" class="btn btn-primary">Acceder</button>
+</EditForm>
+</div>
+@code {
+    public LoginRequest user { get; set; } = new LoginRequest();
+    private string? sms = "";
+    public async Task LoginMethod()
+    {
+        var result = await userManagerService.Login(user);
+        if (result.Success) urlManager.NavigateTo("/",true);
+        else sms = result.Message;
+    }
+
+}
