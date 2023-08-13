@@ -36,11 +36,11 @@ public class BFFMyDbContextSeeder
     }
     private static async Task<bool> GenerarUsuarioAdmin(BFFMyDbContext db)
     {
-        var role = "Administrator";
+        var role = Constants.Roles.Admin;
         var admin = await db.Usuarios.FirstOrDefaultAsync(user => user.Role == role);
         if (admin==null)
         {
-            admin = Usuario.Crear("Felix Benzan", "fbenzan", "123", "Administrator");
+            admin = Usuario.Crear("Felix Benzan", "fbenzan", "123", role);
             db.Usuarios.Add(admin);
             return true;//Forzar un safe change unico...
         }

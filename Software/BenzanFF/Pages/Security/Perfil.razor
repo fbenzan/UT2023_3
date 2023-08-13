@@ -2,6 +2,8 @@
 <h3>Mi Perfil</h3>
 <AuthorizeView Context="data">
     <h1>@data.User.Identity!.Name</h1>
+    <ChangeName/>
+    <ChangePassword/>
 </AuthorizeView>
 @code {
     protected override Task OnInitializedAsync()

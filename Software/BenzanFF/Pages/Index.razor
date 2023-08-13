@@ -1,9 +1,23 @@
 ﻿@page "/"
 
-<PageTitle>Index</PageTitle>
+<PageTitle>BenzanFF - Inicio</PageTitle>
+<AuthorizeView>
+    <Authorized>
+        <h1>Saludos, @context.User.Identity!.Name!</h1>
+        <p>
+            Accede a la administración de tu fast Food.
+        </p>
+    </Authorized>
+    <NotAuthorized>
+        <h1>Bienvenido</h1>
+        <p>
+            Para gestionar tu Fast Food, deberas iniciar sesión o contactar al administrador 
+            (
+                <a href="tel:18293416033">
+                    Felix R. Benzan
+                    </a>
+            ).
+        </p>
+    </NotAuthorized>
+</AuthorizeView>
 
-<h1>Hello, world!</h1>
-
-Welcome to your new app.
-
-<SurveyPrompt Title="How is Blazor working for you?" />
