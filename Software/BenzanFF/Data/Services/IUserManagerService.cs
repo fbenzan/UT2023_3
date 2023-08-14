@@ -13,5 +13,6 @@ namespace BenzanFF.Data.Services
         Task<Result<LoginResponse>> Login(LoginRequest request);
         Task<Result> Logout();
         Task<Result<LoginResponse>> Update(UsuarioRequest request);
+        Task<Result> Delete(int Id);
     }
 }

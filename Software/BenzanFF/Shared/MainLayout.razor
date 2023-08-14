@@ -1,6 +1,8 @@
-﻿@inherits LayoutComponentBase
+﻿@using BenzanFF.Data.Services;
+@inherits LayoutComponentBase
+@inject IUserManagerService userManagerService;
 
-<PageTitle>BenzanFF</PageTitle>
+<PageTitle>Your Fast Food (Benzan)</PageTitle>
 
 <div class="page">
     <div class="sidebar">
@@ -11,9 +13,31 @@
         <AuthorizeView Context="data">
             <Authorized>
                 <div class="top-row px-4">
-                    <NavLink class="nav-link" href="perfil">
-                        <span class="oi oi-person" aria-hidden="true"></span> @data.User!.Identity!.Name
-                    </NavLink>
+                    <div class="dropdown">
+                        <button style="background-color: rgb(76, 42, 6)" class="btn text-white dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">
+                            @data.User!.Identity!.Name
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                            <li>
+                                <button class="dropdown-item" type="button">
+                                    <NavLink class="nav-link" href="perfil">
+                                        <span class="oi oi-person" aria-hidden="true"> 
+                                            Mi Perfil
+                                        </span>
+                                    </NavLink>
+                                </button>
+                            </li>
+                            <li>
+                                <button class="dropdown-item" type="button" @onclick="Logout">
+                                    <span class="nav-link">
+                                        <i class="oi oi-account-logout"></i>
+                                        Cerrar Sesión
+                                    </span>
+                                    
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </Authorized>
             <NotAuthorized>
@@ -30,3 +54,11 @@
         </article>
     </main>
 </div>
+@code{
+    private async Task Logout()
+    {
+        var logout = await userManagerService.Logout();
+        if (logout.Success)
+            urlManager.NavigateTo("/login", true);
+    }
+}

@@ -1,0 +1,179 @@
+﻿@page "/usuarios"
+@attribute [Authorize(Roles = Constants.Roles.Admin)];
+<div class="card w-100 mb-2">
+    <div class="card-header bg-dark text-white">
+        <h5 class="card-title">Estadísticas</h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col">
+                <div class="row fw-bold">
+                    <div class="col"><i class="oi oi-shield"></i>Administradores</div>
+                    <div class="col">@UsuariosAdministradores</div>
+                    <div class="col">
+                        <i class="oi oi-people"></i> Básicos
+                    </div>
+                    <div class="col">@UsuariosBasicos</div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
+@if (ShowForm)
+{
+    <div class="card w-100 mb-2 mt-2">
+        <div class="card-header bg-dark text-white">
+            <h5 class="card-title">Crear nuevo usuario</h5>
+        </div>
+        <div class="card-body">
+            <EditForm OnValidSubmit="CreateUser" Model="request">
+                <DataAnnotationsValidator />
+                <div class="mb-3">
+                    <label for="name" class="form-label fw-bold">Nombre:</label>
+                    <InputText id="name" class="form-control" @bind-Value=request.Name></InputText>
+                    <ValidationMessage For="()=>request.Name"/>
+                </div>
+                <div class="mb-3">
+                    <label for="nickname" class="form-label fw-bold">Usuario:</label>
+                    <InputText id="nickname" class="form-control" @bind-Value=request.Nickname></InputText>
+                    <ValidationMessage For="()=>request.Nickname" />
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label fw-bold">Contraseña</label>
+                    <InputText type="password" class="form-control" id="password" @bind-Value=request.Password></InputText>
+                    <ValidationMessage For="()=>request.Password" />
+                </div>
+                @if (!string.IsNullOrWhiteSpace(sms))
+                {
+                    <div class="alert">
+                        <p class="@sms_type">@sms</p>
+                    </div>
+                }
+                <button type="submit" class="btn btn-primary">Crear</button>
+            </EditForm>
+        </div>
+    </div>
+
+}
+
+<div class="card w-100 mb-2">
+    <div class="card-header bg-dark text-white">
+        <h2 class="card-title">Usuarios</h2>
+    </div>
+    <div class="card-body">
+        @if (!string.IsNullOrWhiteSpace(sms_delete))
+        {
+            <div class="alert">
+                <p class="@sms_type_delete">@sms_delete</p>
+            </div>
+        }
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>
+                        #
+                        <button @onclick="ToogleForm" class="btn btn-outline-success fw-bold">+</button>
+                    </th>
+                    <th>Nombre</th>
+                    <th>Usuario</th>
+                    <th>Rol</th>
+                    <th>...</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (users != null)
+                {
+                    @foreach (var user in users)
+                    {
+                        <tr>
+                            <td scope="row">@user.Id</td>
+                            <td>@user.Name</td>
+                            <td>@user.Nickname</td>
+                            <td>@user.Role</td>
+                            <td>
+                                @if (!user.IsAdmin())
+                                {
+                                    <div class="btn-group" role="group" aria-label="options">
+                                        <button 
+                                            @onclick="()=>DeleteUser(user.Id)" 
+                                            type="button" 
+                                            class="btn btn-outline-danger">
+                                            <i class="oi oi-trash"></i>
+                                        </button>
+                                    </div>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+@code {
+    public bool ShowForm { get; set; } = false; 
+    #region  Crear
+    public string? sms { get; set; }
+    public string sms_type { get; set; } = "text-danger";
+    #endregion
+    #region  Eliminar usuario SMS
+    public string? sms_delete { get; set; }
+    public string sms_type_delete { get; set; } = "text-danger";
+    #endregion
+    List<LoginResponse>? users = new List<LoginResponse>();
+    UsuarioCreateRequest request { get; set; } = new UsuarioCreateRequest();
+
+    public void ToogleForm()
+    {
+        ShowForm = !ShowForm;
+    }
+    public int UsuariosAdministradores => 
+    users != null ? users.Count(u => u.Role == Constants.Roles.Admin) : 0;
+
+    public int UsuariosBasicos => 
+    users != null ? users.Count(u => u.Role == Constants.Roles.Basic) : 0;
+    public async Task Fill()
+    {
+        var r = await userManagerService.GetAsync();
+        if (r.Success) users = r.Data;
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        await Fill();
+    }
+
+    public async Task CreateUser()
+    {
+        var r = await userManagerService.Create(request);
+        if (r.Success)
+        {
+            await Fill();
+            ToogleForm();
+            sms_type = "text-success";
+        }
+        else
+        {
+            sms_type = "text-danger";
+        }
+        sms = r.Message;
+    }
+
+    public async Task DeleteUser(int Id)
+    {
+        var r = await userManagerService.Delete(Id);
+        if (r.Success)
+        {
+            await Fill();
+            sms_delete = r.Message;
+            sms_type_delete = "text-success";
+        }
+        else
+        {
+            sms_type_delete = "text-danger";
+        }
+        sms_delete = r.Message;
+    }
+}

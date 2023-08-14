@@ -23,6 +23,9 @@ builder.Services.AddScoped<IBFFMyDbContext, BFFMyDbContext>();
 builder.Services.AddScoped<ICustomAuthenticationStateProvider, CustomAuthenticationStateProvider>();
 builder.Services.AddScoped<IUserManagerService, UserManagerService>();
 
+//Usuario recurrente
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

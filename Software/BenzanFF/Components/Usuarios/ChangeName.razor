@@ -25,9 +25,13 @@
         var auth = await authState.GetAuthenticationStateAsync();
         if (auth.User.Identity!.IsAuthenticated)
         {
-            var Id = auth.User.FindFirstValue(ClaimTypes.NameIdentifier)??"0";
-            var Name = auth.User.FindFirstValue(ClaimTypes.Name)??"Guest";
-            data = new UsuarioRequest() { Id = int.Parse(Id), Name = Name };
+            var _Id = auth.User.FindFirstValue(ClaimTypes.NameIdentifier)??"0";
+            var _Name = auth.User.FindFirstValue(ClaimTypes.Name)??"Guest";
+
+            if (Id != 0) _Id = Id.ToString();
+            if (!string.IsNullOrWhiteSpace(Name)) _Name = Name;
+
+            data = new UsuarioRequest() { Id = int.Parse(_Id), Name = _Name };
         }
     }
 
@@ -35,6 +39,11 @@
     public string sms_type { get; set; } = "text-danger";
 
     public UsuarioRequest data { get; set; } = new UsuarioRequest();
+
+    [Parameter]
+    public int Id { get; set; } = 0;
+    [Parameter]
+    public string Name { get; set; } = "";
 
     public async void ChangeNameMethod()
     {

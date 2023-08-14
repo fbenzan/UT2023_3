@@ -16,11 +16,13 @@ public class UserManagerService : IUserManagerService
 {
     private readonly IBFFMyDbContext dbContext;
     private readonly ICustomAuthenticationStateProvider customAuthentication;
+    private readonly ICurrentUserService currentUserService;
 
-    public UserManagerService(IBFFMyDbContext dbContext, ICustomAuthenticationStateProvider customAuthentication)
+    public UserManagerService(IBFFMyDbContext dbContext, ICustomAuthenticationStateProvider customAuthentication, ICurrentUserService currentUserService)
     {
         this.dbContext = dbContext;
         this.customAuthentication = customAuthentication;
+        this.currentUserService = currentUserService;
     }
     //El login devuelve una respuesta simple...
     public async Task<SingleResponse> Login(LoginRequest request)
@@ -123,11 +125,12 @@ public class UserManagerService : IUserManagerService
     {
         try
         {
+            var CurrentUserId = await currentUserService.UserId();
             //Representa el usuario al que se le cambiara el rol.
             var usuario_beneficiado = await dbContext.Usuarios.FirstOrDefaultAsync(user => user.Id == request.IdUserToChange);
             if (usuario_beneficiado == null) return SingleResponse.Failed("No fue posible encontrar el usuario a cambiar...");
             //Representa el usuario que esta solicitanto el cambio de rol.
-            var usuario_operador = await dbContext.Usuarios.FirstOrDefaultAsync(user => user.Id == request.IdCurrentUser);
+            var usuario_operador = await dbContext.Usuarios.FirstOrDefaultAsync(user => user.Id == CurrentUserId);
             if (usuario_operador == null) return SingleResponse.Failed("No fue posible encontrar el usuario operador...");
             //Solo si el usuario que solicita el cambio de rol es administrador, se procede a realizar el cambio.
             if (usuario_operador.IsAdmin())
@@ -156,6 +159,34 @@ public class UserManagerService : IUserManagerService
             if (users == null) return ListResponse.Failed("No hay usuarios registrados...");
 
             return ListResponse.Successed(users);
+        }
+        catch (Exception e)
+        {
+            return ListResponse.Failed(e.Message);
+        }
+    }
+    //Listar los usuarios existentes
+    public async Task<Result> Delete(int Id)
+    {
+        try
+        {
+            var CurrentUserId = await currentUserService.UserId();
+            //Representa el usuario al que se le cambiara el rol.
+            var user_to_delete = await dbContext.Usuarios.FirstOrDefaultAsync(user => user.Id == Id);
+            if (user_to_delete == null) return SingleResponse.Failed("No fue posible encontrar el usuario a cambiar...");
+            //Representa el usuario que esta solicitanto el cambio de rol.
+            var usuario_operador = await dbContext.Usuarios.FirstOrDefaultAsync(user => user.Id == CurrentUserId);
+            if (usuario_operador == null) return SingleResponse.Failed("No fue posible encontrar el usuario operador...");
+            //Solo si el usuario que solicita el cambio de rol es administrador, se procede a realizar el cambio.
+            if (usuario_operador.IsAdmin())
+            {
+                dbContext.Usuarios.Remove(user_to_delete);
+                await dbContext.SaveChangesAsync();
+                return SingleResponse.Successed(user_to_delete.ToResponse(), "Se ha eliminado el usuario exitosamente...");
+            }
+            //Se retorna fallido si no es administrador.
+            return SingleResponse.Failed("Usted no está autorizado para eliminar un usuario.");
+
         }
         catch (Exception e)
         {
