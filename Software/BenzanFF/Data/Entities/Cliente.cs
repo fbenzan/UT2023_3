@@ -12,4 +12,3 @@ public class Cliente : Entity
     public virtual ICollection<Venta>? Ventas { get; set; }
     #endregion
 }
-

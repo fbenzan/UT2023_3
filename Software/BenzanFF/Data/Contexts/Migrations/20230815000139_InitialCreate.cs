@@ -39,6 +39,19 @@ namespace BenzanFF.Data.Contexts.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Imagenes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    DatosBase64 = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Imagenes", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Usuarios",
                 columns: table => new
                 {
@@ -52,28 +65,6 @@ namespace BenzanFF.Data.Contexts.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Usuarios", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Servicios",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    IdCategoria = table.Column<int>(type: "int", nullable: false),
-                    Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Portada = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Precio = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Servicios", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Servicios_Categotias_IdCategoria",
-                        column: x => x.IdCategoria,
-                        principalTable: "Categotias",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -94,6 +85,34 @@ namespace BenzanFF.Data.Contexts.Migrations
                         name: "FK_Ventas_Clientes_IdCliente",
                         column: x => x.IdCliente,
                         principalTable: "Clientes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Servicios",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    IdCategoria = table.Column<int>(type: "int", nullable: false),
+                    Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PortadaId = table.Column<int>(type: "int", nullable: false),
+                    Precio = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Servicios", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Servicios_Categotias_IdCategoria",
+                        column: x => x.IdCategoria,
+                        principalTable: "Categotias",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Servicios_Imagenes_PortadaId",
+                        column: x => x.PortadaId,
+                        principalTable: "Imagenes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -132,6 +151,11 @@ namespace BenzanFF.Data.Contexts.Migrations
                 column: "IdCategoria");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Servicios_PortadaId",
+                table: "Servicios",
+                column: "PortadaId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Ventas_IdCliente",
                 table: "Ventas",
                 column: "IdCliente");
@@ -164,6 +188,9 @@ namespace BenzanFF.Data.Contexts.Migrations
 
             migrationBuilder.DropTable(
                 name: "Categotias");
+
+            migrationBuilder.DropTable(
+                name: "Imagenes");
 
             migrationBuilder.DropTable(
                 name: "Clientes");

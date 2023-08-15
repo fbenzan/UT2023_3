@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace BenzanFF.Requests;
+namespace BenzanFF.Data.Requests;
 
 public class LoginRequest
 {

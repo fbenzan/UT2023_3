@@ -5,6 +5,7 @@ namespace BenzanFF.Data.Contexts.Interfaces
 {
     public interface IBFFMyDbContext
     {
+        DbSet<Imagen> Imagenes { get; set; }
         DbSet<ServicioCategoria> Categotias { get; set; }
         DbSet<Cliente> Clientes { get; set; }
         DbSet<Servicio> Servicios { get; set; }

@@ -1,4 +1,4 @@
-﻿namespace BenzanFF.Requests.Usuarios;
+﻿namespace BenzanFF.Data.Requests.Usuarios;
 
 public class UsuarioChangeRoleRequest
 {

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace BenzanFF.Requests.Usuarios;
+namespace BenzanFF.Data.Requests.Usuarios;
 
 public class UsuarioChangePasswordRequest
 {
@@ -11,7 +11,7 @@ public class UsuarioChangePasswordRequest
     public string NewPassword { get; set; } = "";
     [Required(ErrorMessage = "La contraseña de confirmación del usuario es obligatoria."), DataType(DataType.Password), Compare("NewPassword", ErrorMessage = "Las contraseñas no coinciden")]
     public string NewPasswordConfirm { get; set; } = "";
-    public bool Change => (NewPassword == NewPasswordConfirm && !string.IsNullOrWhiteSpace(OldPassword));
+    public bool Change => NewPassword == NewPasswordConfirm && !string.IsNullOrWhiteSpace(OldPassword);
     public void Reset()
     {
         OldPassword = "";

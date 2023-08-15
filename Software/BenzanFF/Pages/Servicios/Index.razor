@@ -1,0 +1,226 @@
+﻿@page "/servicios"
+<h3>Servicios</h3>
+<AuthorizeView Roles="@(Data.Constants.Roles.Admin)" Context="user">
+    <Authorized>
+        @*Para la vista del administrador*@
+        @if (ShowForm)
+        {
+            <div class="card w-100 mb-2 mt-2">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="card-title">Crear nuevo servicio</h5>
+                </div>
+                <div class="card-body">
+                    <EditForm OnValidSubmit="CrearServicio" Model="request">
+                        <DataAnnotationsValidator />
+                        <div class="mb-3">
+                            <CascadingValue Value="request.imagen" IsFixed="true">
+                                <Picture modelo="request.imagen"/>
+                            </CascadingValue>
+                        </div>
+                        <div class="mb-3">
+                            <label for="descripcion" class="form-label fw-bold">Descripción:</label>
+                            <InputText id="descripcion" class="form-control" @bind-Value=request.Descripcion></InputText>
+                            <ValidationMessage For="()=>request.Descripcion"/>
+                        </div>
+                        <div class="mb-3">
+                            <label for="precio" class="form-label fw-bold">Precio RD$:</label>
+                            <InputNumber TValue="decimal" id="precio" class="form-control" @bind-Value=request.Precio>
+                            </InputNumber>
+                            <ValidationMessage For="()=>request.Precio" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="categoria" class="form-label fw-bold">Categoria</label>
+                            <InputSelect id="categoria" class="form-select" @bind-Value="request.IdCategoria">
+                                <option class="disabled" selected disabled value="0">Seleciona una categoría</option>
+                                @if (Categorias != null)
+                                {
+                                    @foreach (var categoria in Categorias)
+                                    {
+                                        <option value="@categoria.Id">@categoria.Nombre</option>
+                                    }
+                                }
+                            </InputSelect>
+                            <ValidationMessage For="()=>request.IdCategoria" />
+                        </div>
+                        @if (!string.IsNullOrWhiteSpace(sms))
+                        {
+                            <div class="alert">
+                                <p class="@sms_type">@sms</p>
+                            </div>
+                        }
+                        <button type="submit" class="btn btn-primary">Crear</button>
+                        <button type="button" @onclick="ToogleForm" class="btn btn-danger">Cancelar</button>
+                    </EditForm>
+                </div>
+            </div>
+        }
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col"># 
+                        <button @onclick="ToogleForm" class="btn btn-outline-success fw-bold">+</button>
+                    </th>
+                    <th scope="col">Portada</th>
+                    <th scope="col">Descripción</th>
+                    <th scope="col">Precio RD$</th>
+                    <th scope="col">Categoría</th>
+                    <th scope="col">...</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Servicios != null)
+                {
+                    @foreach (var servicio in Servicios)
+                    {
+                        <tr>
+                            <th scope="row">@servicio.Id</th>
+                            <td>
+                                <img 
+                                    style="width:100px;"
+                                    src="@(servicio.Portada!.ToDisplayIMG)" 
+                                    class="rounded mx-auto d-block" 
+                                    alt="..."
+                                >
+                            </td>
+                            <td>@servicio.Descripcion</td>
+                            <td>@servicio.Precio.ToString("N2")</td>
+                            <td>@servicio.Categoria!.Nombre</td>
+                            <td>
+                                <div class="btn-group" role="group" aria-label="options">
+                                    <button @onclick="()=>Delete(servicio.Id)"
+                                            type="button"
+                                            class="btn btn-outline-danger">
+                                        <i class="oi oi-trash"></i>
+                                    </button>
+                                </div>
+                                
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </Authorized>
+</AuthorizeView>
+<AuthorizeView>
+    <Authorized>
+        @*Para usuarios logeados (que iniciaron sesion)*@
+        <div class="card-group">
+            @if (Servicios!=null)
+            {
+                @foreach (var item in Servicios)
+                {
+                    <div class="card">
+                        <img src="@item!.Portada!.ToDisplayIMG" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <h5 class="card-title">@item.Descripcion</h5>
+                            <p class="card-text">RD$ @item.Precio.ToString("N2")</p>
+                        </div>
+                        <div class="card-footer">
+                            <small class="text-muted">@item!.Categoria!.Nombre</small>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        @*Para usuarios invitados (publico en general)*@
+        <div class="card-group">
+            @if (Servicios != null)
+            {
+                @foreach (var item in Servicios)
+                {
+                    <div class="card">
+                        <img src="@item!.Portada!.ToDisplayIMG" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <h5 class="card-title">@item.Descripcion</h5>
+                            <p class="card-text">RD$ @item.Precio.ToString("N2")</p>
+                        </div>
+                        <div class="card-footer">
+                            <small class="text-muted">@item!.Categoria!.Nombre</small>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    #region  Crear
+    public string? sms { get; set; }
+    public string sms_type { get; set; } = "text-danger";
+    #endregion
+    //Modelo para registrar servicios nuevos...
+    public ServicioRequest request { get; set; } = new ServicioRequest();
+    //Lista de servicios consultados...
+    public List<ServicioResponse>? Servicios { get; set; } = new List<ServicioResponse>();
+    //Lista de categorias consultadas
+    public List<CategoriaResponseWithServiciosCount>? Categorias { get; set; } 
+    = new List<CategoriaResponseWithServiciosCount>();
+
+    //Consultar los servicios...
+    private async Task Fill()
+    {
+        var r = await serviciosService.GetAsync();
+        if (r.Success)
+        {
+            Servicios = r.Data;
+        }
+        else
+        {
+
+        }
+    }
+    //Consultar las categorias...
+    private async Task FillCategorias()
+    {
+        var r = await categoriaService.GetAsync();
+        if (r.Success)
+        {
+            Categorias = r.Data;
+        }
+        else
+        {
+
+        }
+    }
+    //Crear servicios
+    public async Task CrearServicio()
+    {
+        var r = await serviciosService.CreateAsync(request);
+        if (r.Success)
+        {
+            await Fill();
+            await ToogleForm();
+        }
+        else
+        {
+            sms = r.Message;
+            sms_type = "text-danger";
+        }
+    }
+    //Para eliminar servicios...
+    private async Task Delete(int Id)
+    {
+        var r = await serviciosService.DeleteAsync(Id);
+        if (r.Success)
+            await Fill();
+    }
+    //Para que se muestre el formulario para registrar servicios...
+    public bool ShowForm { get; set; } = false;
+
+    public async Task ToogleForm()
+    {
+        ShowForm = !ShowForm;
+        //Si se muestra el formulario re-cargar las categorias por si existe alguna nueva...
+        if (ShowForm) await FillCategorias();
+        if (!ShowForm) request = new ServicioRequest();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Fill();
+    }
+}

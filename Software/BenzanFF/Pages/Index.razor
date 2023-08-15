@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using BenzanFF.Data.Entities;
 
 <PageTitle>BenzanFF - Inicio</PageTitle>
 <AuthorizeView>
@@ -18,6 +19,12 @@
                     </a>
             ).
         </p>
+        <CascadingValue Value="image" IsFixed="true">
+            <Picture modelo="image"/>
+        </CascadingValue>
     </NotAuthorized>
 </AuthorizeView>
 
+@code{
+    public ImagenRequest image { get; set; } = new ImagenRequest();
+}

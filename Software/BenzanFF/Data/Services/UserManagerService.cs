@@ -1,10 +1,10 @@
 ﻿using BenzanFF.Authentication;
 using BenzanFF.Data.Contexts.Interfaces;
 using BenzanFF.Data.Entities;
+using BenzanFF.Data.Requests;
+using BenzanFF.Data.Requests.Usuarios;
+using BenzanFF.Data.Response;
 using BenzanFF.Extentions;
-using BenzanFF.Requests;
-using BenzanFF.Requests.Usuarios;
-using BenzanFF.Response;
 using Microsoft.EntityFrameworkCore;
 
 namespace BenzanFF.Data.Services;
@@ -193,4 +193,16 @@ public class UserManagerService : IUserManagerService
             return ListResponse.Failed(e.Message);
         }
     }
+}
+
+public interface IUserManagerService
+{
+    Task<Result<LoginResponse>> ChangePassword(UsuarioChangePasswordRequest request);
+    Task<Result<LoginResponse>> ChangeRole(UsuarioChangeRoleRequest request);
+    Task<Result> Create(UsuarioCreateRequest request);
+    Task<ResultList<LoginResponse>> GetAsync();
+    Task<Result<LoginResponse>> Login(LoginRequest request);
+    Task<Result> Logout();
+    Task<Result<LoginResponse>> Update(UsuarioRequest request);
+    Task<Result> Delete(int Id);
 }

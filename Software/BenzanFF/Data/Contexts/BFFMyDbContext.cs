@@ -29,6 +29,7 @@ public class BFFMyDbContext : DbContext, IBFFMyDbContext
         return base.SaveChangesAsync(cancellationToken);
     }
     #region Tablas
+    public DbSet<Imagen> Imagenes { get; set; }
     public DbSet<Cliente> Clientes { get; set; }
     public DbSet<Servicio> Servicios { get; set; }
     public DbSet<ServicioCategoria> Categotias { get; set; }

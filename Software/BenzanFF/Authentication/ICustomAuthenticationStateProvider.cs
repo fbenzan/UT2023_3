@@ -1,4 +1,4 @@
-﻿using BenzanFF.Response;
+﻿using BenzanFF.Data.Response;
 using Microsoft.AspNetCore.Components.Authorization;
 
 namespace BenzanFF.Authentication;

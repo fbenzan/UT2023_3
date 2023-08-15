@@ -15,4 +15,9 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Data\Contexts\Migrations\" />
+    <Folder Include="wwwroot\uploads\imgs\" />
+  </ItemGroup>
+
 </Project>

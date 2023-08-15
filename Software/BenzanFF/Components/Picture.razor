@@ -1,0 +1,23 @@
+﻿@using BenzanFF.Data.Requests;
+
+<EditForm Model="modelo">
+    <label for="file" class="form-label fw-bold">Portada o Imagen:</label>
+    <InputFile id="file" class="form-control" OnChange="CargarImagen" />
+</EditForm>
+
+<img class="img-thumbnail"
+     style="width:250px;" src="@(modelo.ToDisplayIMG)" 
+    alt="Imagen guardada" />
+
+@code {
+    [Parameter]
+    public ImagenRequest modelo { get; set; } = new ImagenRequest();
+
+    private async Task CargarImagen(InputFileChangeEventArgs e)
+    {
+        using var memoryStream = new MemoryStream();
+        await e.File.OpenReadStream().CopyToAsync(memoryStream);
+        var imagenBytes = memoryStream.ToArray();
+        modelo.DatosBase64 = Convert.ToBase64String(imagenBytes); 
+    }
+}

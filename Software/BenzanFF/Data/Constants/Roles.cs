@@ -1,4 +1,4 @@
-﻿namespace BenzanFF.Constants;
+﻿namespace BenzanFF.Data.Constants;
 
 public class Roles
 {

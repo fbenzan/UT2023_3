@@ -12,18 +12,21 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddAuthenticationCore();
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddSingleton<WeatherForecastService>();
 
 //Se agregar el conexto de la base de datos como contexto. 
 builder.Services.AddDbContext<BFFMyDbContext>();
+
+//Se confgura la inyeccion de dependencias del proyecto.
+builder.Services.AddScoped<IBFFMyDbContext, BFFMyDbContext>();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
 
-//Se confgura la inyeccion de dependencias del contexto.
-builder.Services.AddScoped<IBFFMyDbContext, BFFMyDbContext>();
 builder.Services.AddScoped<ICustomAuthenticationStateProvider, CustomAuthenticationStateProvider>();
+builder.Services.AddScoped<IImagenService, ImagenService>();
 builder.Services.AddScoped<IUserManagerService, UserManagerService>();
+builder.Services.AddScoped<IServiciosService, ServiciosService>();
+builder.Services.AddScoped<ICategoriaService, CategoriaService>();
 
-//Usuario recurrente
+//Usuario recurrente (Para identificar el usuario que ha iniciado sesión)
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 
 var app = builder.Build();

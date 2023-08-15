@@ -45,6 +45,23 @@ namespace BenzanFF.Data.Contexts.Migrations
                     b.ToTable("Clientes");
                 });
 
+            modelBuilder.Entity("BenzanFF.Data.Entities.Imagen", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("DatosBase64")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Imagenes");
+                });
+
             modelBuilder.Entity("BenzanFF.Data.Entities.Servicio", b =>
                 {
                     b.Property<int>("Id")
@@ -60,9 +77,8 @@ namespace BenzanFF.Data.Contexts.Migrations
                     b.Property<int>("IdCategoria")
                         .HasColumnType("int");
 
-                    b.Property<string>("Portada")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("PortadaId")
+                        .HasColumnType("int");
 
                     b.Property<decimal>("Precio")
                         .HasColumnType("decimal(18,2)");
@@ -70,6 +86,8 @@ namespace BenzanFF.Data.Contexts.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("IdCategoria");
+
+                    b.HasIndex("PortadaId");
 
                     b.ToTable("Servicios");
                 });
@@ -184,7 +202,15 @@ namespace BenzanFF.Data.Contexts.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("BenzanFF.Data.Entities.Imagen", "Portada")
+                        .WithMany()
+                        .HasForeignKey("PortadaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Categoria");
+
+                    b.Navigation("Portada");
                 });
 
             modelBuilder.Entity("BenzanFF.Data.Entities.Venta", b =>

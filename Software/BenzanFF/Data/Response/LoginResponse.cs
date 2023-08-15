@@ -1,4 +1,4 @@
-﻿namespace BenzanFF.Response;
+﻿namespace BenzanFF.Data.Response;
 
 public class LoginResponse
 {

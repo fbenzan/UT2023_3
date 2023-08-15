@@ -1,5 +1,5 @@
 ﻿@page "/usuarios"
-@attribute [Authorize(Roles = Constants.Roles.Admin)];
+@attribute [Authorize(Roles = Roles.Admin)];
 <div class="card w-100 mb-2">
     <div class="card-header bg-dark text-white">
         <h5 class="card-title">Estadísticas</h5>
@@ -54,7 +54,6 @@
             </EditForm>
         </div>
     </div>
-
 }
 
 <div class="card w-100 mb-2">
@@ -131,10 +130,10 @@
         ShowForm = !ShowForm;
     }
     public int UsuariosAdministradores => 
-    users != null ? users.Count(u => u.Role == Constants.Roles.Admin) : 0;
+    users != null ? users.Count(u => u.Role == Roles.Admin) : 0;
 
     public int UsuariosBasicos => 
-    users != null ? users.Count(u => u.Role == Constants.Roles.Basic) : 0;
+    users != null ? users.Count(u => u.Role == Roles.Basic) : 0;
     public async Task Fill()
     {
         var r = await userManagerService.GetAsync();
